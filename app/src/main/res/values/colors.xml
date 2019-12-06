@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="color_999999">#999999</color>
+    <color name="color_222222">#222222</color>
+    <color name="color_FF3B30">#FF3B30</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_F3F5F4">#F3F5F4</color>
+
+
+
+    <color name="color_ff000000">#ff000000</color>
+    <color name="color_f6">#f6f6f6</color>
+
+    <color name="color_f7f7f7">#F7F7F7</color>
+    <color name="color_20f7f7f7">#20F7F7F7</color>
+
+
+    <color name="common_black">#000000</color>
+    <color name="color_FFFFFF">#FFFFFF</color>
+    <color name="color_000000">#000000</color>
+    <color name="color_B2000000">#B2000000</color>
+    <color name="color_D8D8D8">#D8D8D8</color>
+    <color name="color_CFCFCF">#CFCFCF</color>
+    <color name="color_E1E1E1">#E1E1E1</color>
+    <color name="color_F6F6F6">#F6F6F6</color>
+    <color name="color_F8F8F8">#F8F8F8</color>
+    <color name="color_6B6B6B">#6B6B6B</color>
+    <color name="color_666666">#666666</color>
+    <color name="color_CCCCCC">#CCCCCC</color>
+
+    <color name="tab_panel_bg">#ffffff</color>
+    <color name="bar_divider">#D4D6D8</color>
+    <color name="tab_panel_divider">@color/bar_divider</color>
+
+
+
+
+
 </resources>

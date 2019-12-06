@@ -2,10 +2,11 @@ package com.hacksthon.team.manager;
 
 import android.text.TextUtils;
 import android.util.Log;
-
+import com.google.gson.Gson;
 import com.hacksthon.team.bean.SocketConfig;
+import com.hacksthon.team.event.DeviceEvent;
+import com.hacksthon.team.event.DeviceEvent.DeviceInfo;
 import com.hacksthon.team.interfaces.SocketListener;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * <pre>
@@ -117,12 +119,14 @@ public class SocketServerManager {
         public void run() {
             super.run();
             try {
-                InetSocketAddress socketAddress = new InetSocketAddress(mConfig.getPort());
+//                InetSocketAddress socketAddress = new InetSocketAddress(mConfig.getPort());
+                InetSocketAddress socketAddress = new InetSocketAddress("10.180.6.241", 9999);
                 mServerSocket = new ServerSocket();
-                mServerSocket.bind(socketAddress);
+                mServerSocket.bind(socketAddress );
                 while (isEnable) {
                     socket = mServerSocket.accept();
                     threadPool.submit(new WorkThread());
+                    threadPool.submit(new DeviceThread(socket));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -145,8 +149,8 @@ public class SocketServerManager {
                     while ((temp = inputStream.read(data)) != -1) {
                         String content = new String(data, 0, temp, "UTF-8");
                         Log.d("hackson","服务器收到的数据:"+content);
-//                        DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
-//                        EventBus.getDefault().post(new DeviceEvent(deviceInfo));
+                        DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
+                        EventBus.getDefault().post(new DeviceEvent(deviceInfo));
                         if(mSocketListener!=null){
                             mSocketListener.receiveData(content);
                         }

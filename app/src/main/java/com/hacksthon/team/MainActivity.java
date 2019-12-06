@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_devices_manager:
+                startActivity(new Intent(this,DeviceManagerActivity.class));
 
                 break;
             case R.id.btn_pay:
