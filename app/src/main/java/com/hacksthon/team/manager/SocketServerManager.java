@@ -10,6 +10,7 @@ import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.bean.SocketConfig;
 import com.hacksthon.team.event.DeviceEvent;
 import com.hacksthon.team.interfaces.SocketListener;
+import com.hacksthon.team.utils.Constants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -123,7 +124,7 @@ public class SocketServerManager {
             super.run();
             try {
 //                InetSocketAddress socketAddress = new InetSocketAddress(mConfig.getPort());
-                InetSocketAddress socketAddress = new InetSocketAddress("10.180.6.241", 9999);
+                InetSocketAddress socketAddress = new InetSocketAddress("10.180.6.241", Constants.PORT);
                 mServerSocket = new ServerSocket();
                 mServerSocket.bind(socketAddress );
                 while (isEnable) {
