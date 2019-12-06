@@ -8,7 +8,4 @@ public class ServerRep {
     public Integer cmdType;//命令指令
     public String info;//描述信息
 
-
-
-
 }

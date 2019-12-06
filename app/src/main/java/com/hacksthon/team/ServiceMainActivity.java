@@ -37,6 +37,7 @@ public class ServiceMainActivity extends AppCompatActivity implements View.OnCli
         serverManager = SocketServerManager.getInstance();
         serverManager.setSocketConfig(new SocketConfig(Constants.PORT));
         serverManager.setEnable(true);
+      //  serverManager.stopSocketServer();
         serverManager.startScoketServer();
         serverManager.setSocketListener(new SocketListener() {
             @Override
@@ -60,5 +61,11 @@ public class ServiceMainActivity extends AppCompatActivity implements View.OnCli
             }
             serverManager.sendData(et_data.getText().toString());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        serverManager.stopSocketServer();
     }
 }

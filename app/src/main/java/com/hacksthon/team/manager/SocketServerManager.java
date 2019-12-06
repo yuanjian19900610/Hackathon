@@ -2,11 +2,13 @@ package com.hacksthon.team.manager;
 
 import android.text.TextUtils;
 import android.util.Log;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
+import com.hacksthon.team.bean.CmdConstantType;
+import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.bean.SocketConfig;
 import com.hacksthon.team.event.DeviceEvent;
-import com.hacksthon.team.event.DeviceEvent.DeviceInfo;
 import com.hacksthon.team.interfaces.SocketListener;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +44,7 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class SocketServerManager {
 
-    private static final String TAG=SocketServerManager.class.getSimpleName();
+    private static final String TAG = SocketServerManager.class.getSimpleName();
     public static SocketServerManager manager;
     private boolean isEnable=true;
     private ExecutorService threadPool;
@@ -145,24 +147,54 @@ public class SocketServerManager {
         public void run() {
             if (mSocket != null) {
                 try {
-                    InputStream inputStream = socket.getInputStream();
-                    OutputStream outputStream = socket.getOutputStream();
-                    byte[] data = new byte[1024 * 4];
-                    int temp = 0;
 
-                    int length = inputStream.available();
-                    byte[] buffer = new byte[length];
-                    int state = inputStream.read(buffer);
-                    String content = new String(buffer, "UTF-8");
-                    Log.d("hackson","服务器收到的数据11:"+content);
+                    OutputStream outputStream = socket.getOutputStream();
+                    InputStream inputStream = socket.getInputStream();
+                    byte buffer[] = new byte[1024 * 4];
+                    int temp = 0;
+                    while ((temp = inputStream.read(buffer)) != -1) {
+                        String content = new String(buffer, 0, temp, "UTF-8");
+
                         DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
-                        EventBus.getDefault().post(new DeviceEvent(deviceInfo));
-                    Log.d("hackson","发送的数据:EventBus");
-                    ServerRep serverRep = new ServerRep();
-                    serverRep.cmdType = 0x01;
-                    serverRep.info = "请锁屏";
-                    Log.d("hackson","发送的数据:"+new Gson().toJson(serverRep));
-                    outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
+
+                        if (deviceInfo.cmdType == CmdConstantType.CMD_CONNECT) {
+
+                            ServerRep serverRep = new ServerRep();
+                            serverRep.cmdType = CmdConstantType.CMD_CONNECT;
+                            serverRep.info = "收到连接";
+                            outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
+                            outputStream.flush();
+                            ToastUtils.showShort("连接指令收到");
+
+                            EventBus.getDefault().post(new DeviceEvent(deviceInfo));
+
+                        } else if (deviceInfo.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
+
+                            ServerRep serverRep = new ServerRep();
+                            serverRep.cmdType = CmdConstantType.CMD_CLOSE_SCREEN;
+                            serverRep.info = "锁屏";
+                            outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
+                            outputStream.flush();
+                            ToastUtils.showShort("锁屏指令收到");
+
+
+                        } else if (deviceInfo.cmdType == CmdConstantType.CMD_PLAY_SOUND) {
+
+                            ServerRep serverRep = new ServerRep();
+                            serverRep.cmdType = CmdConstantType.CMD_PLAY_SOUND;
+                            serverRep.info = "播放声音";
+                            outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
+                            outputStream.flush();
+                            ToastUtils.showShort("服务端播放声音指令收到");
+
+
+                        }
+
+                    }
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

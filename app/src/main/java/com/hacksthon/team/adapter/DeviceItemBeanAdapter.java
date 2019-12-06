@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hacksthon.team.R;
-import com.hacksthon.team.event.DeviceEvent.DeviceInfo;
+import com.hacksthon.team.bean.DeviceInfo;
 import java.util.List;
 
 public class DeviceItemBeanAdapter extends BaseQuickAdapter<DeviceInfo, BaseViewHolder> {
