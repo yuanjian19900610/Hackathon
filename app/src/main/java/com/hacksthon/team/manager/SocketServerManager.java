@@ -3,6 +3,7 @@ package com.hacksthon.team.manager;
 import android.text.TextUtils;
 import android.util.Log;
 import com.google.gson.Gson;
+import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.bean.SocketConfig;
 import com.hacksthon.team.event.DeviceEvent;
 import com.hacksthon.team.event.DeviceEvent.DeviceInfo;
@@ -125,7 +126,8 @@ public class SocketServerManager {
                 mServerSocket.bind(socketAddress );
                 while (isEnable) {
                     socket = mServerSocket.accept();
-                    threadPool.submit(new WorkThread());
+                    Log.d("hackson","服务器收到的数据:"+socket);
+                   // threadPool.submit(new WorkThread());
                     threadPool.submit(new DeviceThread(socket));
                 }
             } catch (IOException e) {
@@ -144,17 +146,23 @@ public class SocketServerManager {
             if (mSocket != null) {
                 try {
                     InputStream inputStream = socket.getInputStream();
+                    OutputStream outputStream = socket.getOutputStream();
                     byte[] data = new byte[1024 * 4];
                     int temp = 0;
-                    while ((temp = inputStream.read(data)) != -1) {
-                        String content = new String(data, 0, temp, "UTF-8");
-                        Log.d("hackson","服务器收到的数据:"+content);
+
+                    int length = inputStream.available();
+                    byte[] buffer = new byte[length];
+                    int state = inputStream.read(buffer);
+                    String content = new String(buffer, "UTF-8");
+                    Log.d("hackson","服务器收到的数据11:"+content);
                         DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
                         EventBus.getDefault().post(new DeviceEvent(deviceInfo));
-                        if(mSocketListener!=null){
-                            mSocketListener.receiveData(content);
-                        }
-                    }
+                    Log.d("hackson","发送的数据:EventBus");
+                    ServerRep serverRep = new ServerRep();
+                    serverRep.cmdType = 0x01;
+                    serverRep.info = "请锁屏";
+                    Log.d("hackson","发送的数据:"+new Gson().toJson(serverRep));
+                    outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

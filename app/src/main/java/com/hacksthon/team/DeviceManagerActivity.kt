@@ -39,7 +39,6 @@ class DeviceManagerActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshEvent(event: DeviceEvent) {
         val deviceInfo = event.mDeviceInfo
@@ -61,7 +60,6 @@ class DeviceManagerActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
-
 
     protected fun registerEventBus() {
         if (!EventBus.getDefault().isRegistered(this)) {
