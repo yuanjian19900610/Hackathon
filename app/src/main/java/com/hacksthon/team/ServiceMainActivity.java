@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hacksthon.team.bean.SocketConfig;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.manager.SocketServerManager;
 import com.hacksthon.team.utils.Constants;
@@ -35,7 +34,7 @@ public class ServiceMainActivity extends AppCompatActivity implements View.OnCli
 
     private void initSocketService() {
         serverManager = SocketServerManager.getInstance();
-        serverManager.setSocketConfig(new SocketConfig(Constants.PORT));
+//        serverManager.setSocketConfig(new SocketConfig(Constants.PORT));
         serverManager.setEnable(true);
       //  serverManager.stopSocketServer();
         serverManager.startScoketServer();

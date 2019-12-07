@@ -3,11 +3,15 @@ package com.hacksthon.team.manager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.hacksthon.team.interfaces.SocketListener;
+import com.hacksthon.team.utils.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Parameter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,23 +44,27 @@ public class SocketManager {
     private static SocketManager mSocketManager;
     private Socket mSocket;
     //是否停止读取数据
-    private boolean isEnable=true;
+    private boolean isEnable = true;
     private SocketListener mSocketListener;
 
     private ExecutorService threadPool;
 
-    public static SocketManager getInstance(Socket socket) {
+    public static SocketManager getInstance() {
         if (mSocketManager == null) {
             synchronized (SocketManager.class) {
-                mSocketManager = new SocketManager(socket);
+                mSocketManager = new SocketManager();
             }
         }
         return mSocketManager;
     }
 
-    private SocketManager(Socket socket) {
-        this.mSocket=socket;
+
+    private SocketManager() {
         threadPool = Executors.newCachedThreadPool();
+    }
+
+    public void setSocket(Socket socket) {
+        this.mSocket = socket;
     }
 
     public void setSocketListener(SocketListener socketListener) {
@@ -74,6 +82,10 @@ public class SocketManager {
         return false;
     }
 
+    public Socket getSocket() {
+        return mSocket;
+    }
+
     public void closeConnect() {
         try {
             if (mSocket != null) {
@@ -86,20 +98,30 @@ public class SocketManager {
 
     /**
      * 发送数据
-     * @param data  发送到数据
+     *
+     * @param data 发送到数据
      */
     public void sendData(String data) {
         if (TextUtils.isEmpty(data)) {
             return;
         }
         if (mSocket == null) {
-            Log.d(TAG," sendData() socket is null");
+            Log.d(TAG, " sendData() socket is null");
             return;
         }
         try {
+            mSocket.connect(new InetSocketAddress(Constants.IPADDRESS,Constants.PORT));//超时时间为2秒
 
             OutputStream outputStream = mSocket.getOutputStream();
             outputStream.write(data.getBytes());
+            ToastUtils.showLong("发送数据成功=" + data);
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            if (mSocket != null) {
+                mSocket.close();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,10 +132,30 @@ public class SocketManager {
      */
     public void receiveData() {
         if (mSocket == null) {
-            Log.d(TAG,"receiveData() socket is null");
+            Log.d(TAG, "receiveData() socket is null");
             return;
         }
-        threadPool.submit(new WorkThread());
+        try {
+            while (isEnable) {
+//                    mSocket.connect(new InetSocketAddress("10.180.6.241", 9990));//超时时间为2秒
+//                    if (mSocket.isConnected()) {
+                InputStream inputStream = mSocket.getInputStream();
+                byte[] buff = new byte[1024];
+                String content = new String(buff, 0, inputStream.read(buff));
+                Log.i(TAG, "socket 接收到到数据：" + content);
+                if (mSocketListener != null) {
+                    mSocketListener.receiveData(content);
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+////                    }
+//        threadPool.submit(new WorkThread());
     }
 
     /**
@@ -125,6 +167,8 @@ public class SocketManager {
             super.run();
             try {
                 while (isEnable) {
+//                    mSocket.connect(new InetSocketAddress("10.180.6.241", 9990));//超时时间为2秒
+//                    if (mSocket.isConnected()) {
                     InputStream inputStream = mSocket.getInputStream();
                     byte[] buff = new byte[1024];
                     String content = new String(buff, 0, inputStream.read(buff));
@@ -132,6 +176,10 @@ public class SocketManager {
                     if (mSocketListener != null) {
                         mSocketListener.receiveData(content);
                     }
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -58,6 +58,7 @@ public class ClientMainActivity extends AppCompatActivity implements View.OnClic
         tv_content = (TextView) findViewById(R.id.tv_content);
         btn_connect.setOnClickListener(this);
         btn_send.setOnClickListener(this);
+        et_ipaddress.setText("10.180.1.124");
     }
 
 
@@ -68,7 +69,8 @@ public class ClientMainActivity extends AppCompatActivity implements View.OnClic
                 super.run();
                 try {
                     Socket socket = new Socket(ipAddrss, Constants.PORT);
-                    mSocketManager = SocketManager.getInstance(socket);
+                    mSocketManager = SocketManager.getInstance();
+                    mSocketManager.setSocket(socket);
                     mSocketManager.setEnable(true);
                     mSocketManager.receiveData();
                     mSocketManager.setSocketListener(new SocketListener() {
@@ -99,6 +101,7 @@ public class ClientMainActivity extends AppCompatActivity implements View.OnClic
             }
             mSocketManager.sendData(et_data.getText().toString());
         }else if(v.getId()==R.id.btn_connect){
+
             if (TextUtils.isEmpty(et_ipaddress.getText().toString())) {
                 Toast.makeText(getApplicationContext(), "请输入服务器IP地址", Toast.LENGTH_SHORT);
                 return;

@@ -7,9 +7,10 @@ import com.google.gson.Gson;
 import com.hacksthon.team.bean.CmdConstantType;
 import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
-import com.hacksthon.team.bean.SocketConfig;
 import com.hacksthon.team.event.DeviceEvent;
 import com.hacksthon.team.interfaces.SocketListener;
+import com.hacksthon.team.utils.Constants;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,7 +49,6 @@ public class SocketServerManager {
     public static SocketServerManager manager;
     private boolean isEnable=true;
     private ExecutorService threadPool;
-    private SocketConfig mConfig;
     private ServerSocket mServerSocket;
     private Socket socket;
     private SocketListener mSocketListener;
@@ -67,10 +67,6 @@ public class SocketServerManager {
         threadPool = Executors.newCachedThreadPool();
     }
 
-    public void setSocketConfig(SocketConfig config) {
-        this.mConfig = config;
-
-    }
 
     public void setSocketListener(SocketListener socketListener) {
         this.mSocketListener = socketListener;
@@ -80,6 +76,7 @@ public class SocketServerManager {
      * 开启socketServer
      */
     public void startScoketServer() {
+        Log.d("smarhit","开启了socketServer");
         MonitorThread monitorThread = new MonitorThread();
         monitorThread.start();
     }
@@ -123,7 +120,7 @@ public class SocketServerManager {
             super.run();
             try {
 //                InetSocketAddress socketAddress = new InetSocketAddress(mConfig.getPort());
-                InetSocketAddress socketAddress = new InetSocketAddress("10.180.6.241", 9990);
+                InetSocketAddress socketAddress = new InetSocketAddress(Constants.IPADDRESS, Constants.PORT);
                 mServerSocket = new ServerSocket();
                 mServerSocket.bind(socketAddress );
                 while (isEnable) {

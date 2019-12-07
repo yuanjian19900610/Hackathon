@@ -11,16 +11,20 @@ import android.widget.Toast;
 import com.cardinfo.smartpos.TradeController;
 import com.cardinfo.smartpos.TransCallback;
 import com.cardinfo.smartpos.service.ResponseBean;
+import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.KayouPayListener;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.manager.SocketManager;
 import com.hacksthon.team.utils.Constants;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.Socket;
 
 public class PayActivity extends AppCompatActivity implements KayouPayListener {
+
+    public static final String PAY_INFO="payInfo";
 
     private static final String TAG=PayActivity.class.getSimpleName();
     private TextView tvPayInfo;
@@ -38,7 +42,13 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                 pay(new BigDecimal(0.01));
             }
         });
-        startSocket("");
+        ServerRep  serverRep = (ServerRep) getIntent().getSerializableExtra(PAY_INFO);
+        StringBuilder sb=new StringBuilder();
+        sb.append("订单号："+serverRep.orderNo+"\n");
+        sb.append("订单金额："+serverRep.amount+"\n");
+        sb.append("说明："+serverRep.info+"\n");
+        tvPayInfo.setText(sb.toString());
+        startSocket();
     }
 
 
@@ -53,8 +63,8 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
         requestBean.setBusinessMode("1");
         /** /打印页数 默认两页 商户存根 持卡人存根，第三联为银联存根*/
         requestBean.setPrintPage("2");
-        requestBean.setThirdPartyTransOrderNum("12312312");
-        requestBean.setThirdPartyInfo("2324234");
+        requestBean.setThirdPartyTransOrderNum(System.currentTimeMillis()+"");
+        requestBean.setThirdPartyInfo(System.currentTimeMillis()+"1001");
         /** 是否需要电子签名 默认不需要0 , 1 需要 */
         requestBean.setIsNeedElectronicSignature("1");
         doBusinessKaYou(requestBean,this);
@@ -96,14 +106,15 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
     }
 
 
-    private void startSocket(final String ipAddrss) {
+    private void startSocket() {
         new Thread(){
             @Override
             public void run() {
                 super.run();
                 try {
-                    Socket socket = new Socket(ipAddrss, Constants.PORT);
-                    mSocketManager = SocketManager.getInstance(socket);
+                    Socket socket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                    mSocketManager = SocketManager.getInstance();
+                    mSocketManager.setSocket(socket);
                     mSocketManager.setEnable(true);
                     mSocketManager.receiveData();
                     mSocketManager.setSocketListener(new SocketListener() {

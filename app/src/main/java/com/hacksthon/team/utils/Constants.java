@@ -24,5 +24,9 @@ package com.hacksthon.team.utils;
  */
 public interface Constants {
 
-    int PORT=8080;
+    //    int PORT = 8081;
+//    String IPADDRESS = "10.180.1.124";
+    int PORT = 9990;
+    String IPADDRESS = "10.180.6.241";
+
 }

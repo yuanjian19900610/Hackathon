@@ -17,5 +17,13 @@ public class CmdConstantType {
     //断开连接
     public static final int CMD_DIS_CONNECT = 0x08;
 
+    //支付
+    public static final int CMD_PAY = 0x09;
+
+    //支付设备
+    public static final int CMD_PAY_DEVICES = 0x10;
+
+
+
 
 }
