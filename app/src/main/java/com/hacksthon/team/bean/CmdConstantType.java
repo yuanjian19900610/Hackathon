@@ -23,6 +23,9 @@ public class CmdConstantType {
     //支付设备
     public static final int CMD_PAY_DEVICES = 0x10;
 
+    //支付成功
+    public static final int CMD_PAY_SUCCESS= 0x19;
+
 
 
 

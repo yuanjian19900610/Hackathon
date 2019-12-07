@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.cardinfo.smartpos.TradeController;
 import com.cardinfo.smartpos.TransCallback;
 import com.cardinfo.smartpos.service.ResponseBean;
+import com.hacksthon.team.bean.CmdConstantType;
+import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.KayouPayListener;
 import com.hacksthon.team.interfaces.SocketListener;
@@ -42,13 +44,13 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                 pay(new BigDecimal(0.01));
             }
         });
-        ServerRep  serverRep = (ServerRep) getIntent().getSerializableExtra(PAY_INFO);
-        StringBuilder sb=new StringBuilder();
-        sb.append("订单号："+serverRep.orderNo+"\n");
-        sb.append("订单金额："+serverRep.amount+"\n");
-        sb.append("说明："+serverRep.info+"\n");
-        tvPayInfo.setText(sb.toString());
-        startSocket();
+//        ServerRep  serverRep = (ServerRep) getIntent().getSerializableExtra(PAY_INFO);
+//        StringBuilder sb=new StringBuilder();
+//        sb.append("订单号："+serverRep.orderNo+"\n");
+//        sb.append("订单金额："+serverRep.amount+"\n");
+//        sb.append("说明："+serverRep.info+"\n");
+//        tvPayInfo.setText(sb.toString());
+//        startSocket();
     }
 
 
@@ -82,6 +84,14 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                     listener.onError(errorCode, errorMsg, null);
                 }
                 Toast.makeText(getApplicationContext(),"支付失败="+errorMsg,Toast.LENGTH_SHORT).show();
+                DeviceInfo info = new DeviceInfo();
+                info.deviceMac = "20:59:a0:0e:58:c6";
+                info.deviceIp = "192.168.0.114";
+                info.deviceInfo = "刷卡成功";
+                info.deviceType = 0x01;
+                info.cmdType = CmdConstantType.CMD_PAY_SUCCESS;
+                SocketManager.getInstance().sendData(info);
+
             }
 
             @Override
@@ -105,34 +115,4 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
 
     }
 
-
-    private void startSocket() {
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    Socket socket = new Socket(Constants.IPADDRESS, Constants.PORT);
-                    mSocketManager = SocketManager.getInstance();
-                    mSocketManager.setSocket(socket);
-                    mSocketManager.setEnable(true);
-                    mSocketManager.receiveData();
-                    mSocketManager.setSocketListener(new SocketListener() {
-                        @Override
-                        public void receiveData(final String data) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tvPayInfo.setText(data);
-                                }
-                            });
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
-    }
 }

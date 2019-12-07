@@ -1,9 +1,16 @@
 package com.hacksthon.team.manager;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.gson.Gson;
+import com.hacksthon.team.MainActivity;
+import com.hacksthon.team.PayActivity;
+import com.hacksthon.team.bean.CmdConstantType;
+import com.hacksthon.team.bean.DeviceInfo;
+import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.utils.Constants;
 
@@ -46,8 +53,12 @@ public class SocketManager {
     //是否停止读取数据
     private boolean isEnable = true;
     private SocketListener mSocketListener;
-
     private ExecutorService threadPool;
+    private OutputStream outputStream = null;
+    private InputStream inputStream = null;
+    private DeviceInfo mData;
+
+    private SendDataThread mSendDataThread;
 
     public static SocketManager getInstance() {
         if (mSocketManager == null) {
@@ -96,66 +107,54 @@ public class SocketManager {
         }
     }
 
-    /**
-     * 发送数据
-     *
-     * @param data 发送到数据
-     */
-    public void sendData(String data) {
-        if (TextUtils.isEmpty(data)) {
-            return;
-        }
-        if (mSocket == null) {
-            Log.d(TAG, " sendData() socket is null");
-            return;
-        }
-        try {
-            mSocket.connect(new InetSocketAddress(Constants.IPADDRESS,Constants.PORT));//超时时间为2秒
+    public void sendData(final DeviceInfo deviceInfo) {
+        this.mData=deviceInfo;
+        this.isEnable=true;
+        startSocket();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-            OutputStream outputStream = mSocket.getOutputStream();
-            outputStream.write(data.getBytes());
-            ToastUtils.showLong("发送数据成功=" + data);
-            if (outputStream != null) {
-                outputStream.close();
-            }
-            if (mSocket != null) {
-                mSocket.close();
-            }
+//        if(mSendDataThread==null){
+//            mSendDataThread=new SendDataThread();
+//        }
+//        mSendDataThread.start();
+//        new SendDataThread().start();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
-    /**
-     * 读取数据
-     */
-    public void receiveData() {
-        if (mSocket == null) {
-            Log.d(TAG, "receiveData() socket is null");
-            return;
-        }
-        try {
-            while (isEnable) {
-//                    mSocket.connect(new InetSocketAddress("10.180.6.241", 9990));//超时时间为2秒
-//                    if (mSocket.isConnected()) {
-                InputStream inputStream = mSocket.getInputStream();
-                byte[] buff = new byte[1024];
-                String content = new String(buff, 0, inputStream.read(buff));
-                Log.i(TAG, "socket 接收到到数据：" + content);
-                if (mSocketListener != null) {
-                    mSocketListener.receiveData(content);
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-////                    }
-//        threadPool.submit(new WorkThread());
+
+
+    public void startSocket() {
+        threadPool.submit(new WorkThread());
+    }
+
+
+    private class  SendDataThread extends Thread{
+        @Override
+        public void run() {
+            super.run();
+            try {
+                if (mSocket == null || !mSocket.isConnected()) {
+                    mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                }
+                outputStream = mSocket.getOutputStream();
+                outputStream.write(new Gson().toJson(mData).getBytes());
+                Log.d(TAG, "数据已发送");
+                outputStream.flush();
+                if(mData.cmdType==CmdConstantType.CMD_CONNECT){
+                    Log.d(TAG, "发送连接数据指令");
+                    startSocket();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                Log.d(TAG, "发送指令线程结束");
+            }
+        }
     }
 
     /**
@@ -166,23 +165,55 @@ public class SocketManager {
         public void run() {
             super.run();
             try {
+                if (mSocket == null || !mSocket.isConnected()) {
+                    mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                }
+                outputStream = mSocket.getOutputStream();
+                outputStream.write(new Gson().toJson(mData).getBytes());
+                outputStream.flush();
                 while (isEnable) {
-//                    mSocket.connect(new InetSocketAddress("10.180.6.241", 9990));//超时时间为2秒
-//                    if (mSocket.isConnected()) {
-                    InputStream inputStream = mSocket.getInputStream();
+                    if (mSocket == null || !mSocket.isConnected()) {
+                        mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                    }
+                    inputStream = mSocket.getInputStream();
                     byte[] buff = new byte[1024];
                     String content = new String(buff, 0, inputStream.read(buff));
-                    Log.i(TAG, "socket 接收到到数据：" + content);
+                    Log.i(TAG, "客服端 接收到到数据：" + content);
                     if (mSocketListener != null) {
                         mSocketListener.receiveData(content);
                     }
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
+//                    ServerRep serverRep = new Gson().fromJson(content, ServerRep.class);
+                    //发送刷卡指令
+                        isEnable=false;
+                       /* DeviceInfo  info = new DeviceInfo();
+                        info.deviceMac = "20:59:a0:0e:58:c6";
+                        info.deviceIp = "192.168.0.114";
+                        info.deviceInfo = "需要刷卡";
+                        info.deviceType = 0x01;
+                        info.cmdType = CmdConstantType.CMD_PAY;
+                        outputStream = mSocket.getOutputStream();
+                        outputStream.write(new Gson().toJson(info).getBytes());
+                        Log.d(TAG, "发送刷卡数据成功");
+                        outputStream.flush();*/
 //                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                Log.d(TAG, "线程结束。。。。。。isEnable="+isEnable);
+//                try {
+//                    if (inputStream != null) {
+//                        inputStream.close();
+//                    }
+//
+//                    if (outputStream != null) {
+//                        outputStream.close();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+
             }
         }
     }

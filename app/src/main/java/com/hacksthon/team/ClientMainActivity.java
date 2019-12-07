@@ -72,7 +72,7 @@ public class ClientMainActivity extends AppCompatActivity implements View.OnClic
                     mSocketManager = SocketManager.getInstance();
                     mSocketManager.setSocket(socket);
                     mSocketManager.setEnable(true);
-                    mSocketManager.receiveData();
+//                    mSocketManager.receiveData();
                     mSocketManager.setSocketListener(new SocketListener() {
                         @Override
                         public void receiveData(final String Data) {
@@ -99,7 +99,7 @@ public class ClientMainActivity extends AppCompatActivity implements View.OnClic
                 Toast.makeText(getApplicationContext(), "请输入发送的内容", Toast.LENGTH_SHORT);
                 return;
             }
-            mSocketManager.sendData(et_data.getText().toString());
+//            mSocketManager.sendData(et_data.getText().toString());
         }else if(v.getId()==R.id.btn_connect){
 
             if (TextUtils.isEmpty(et_ipaddress.getText().toString())) {

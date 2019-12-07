@@ -14,6 +14,7 @@ import com.hacksthon.team.utils.Constants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -183,6 +184,17 @@ public class SocketServerManager {
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
                             ToastUtils.showShort("服务端播放声音指令收到");
+
+
+                        }else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY) {
+                            ServerRep resp=new ServerRep();
+                            resp.cmdType=CmdConstantType.CMD_PAY;
+                            resp.info="小龙坎火锅";
+                            resp.amount=new BigDecimal(0.01).setScale(2,BigDecimal.ROUND_HALF_UP);
+                            resp.orderNo=System.currentTimeMillis()+"";
+                            outputStream.write(new Gson().toJson(resp).getBytes("utf-8"));
+                            outputStream.flush();
+                            ToastUtils.showShort("请求刷卡。。。");
 
 
                         }

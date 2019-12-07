@@ -70,7 +70,7 @@ public class SocketServer extends IntentService {
             SocketManager mSocketManager = SocketManager.getInstance();
             mSocketManager.setSocket(socket);
             mSocketManager.setEnable(true);
-            mSocketManager.receiveData();
+//            mSocketManager.receiveData();
             mSocketManager.setSocketListener(new SocketListener() {
                 @Override
                 public void receiveData(final String data) {
@@ -99,7 +99,7 @@ public class SocketServer extends IntentService {
                 info.deviceInfo = "设备正常";
                 info.deviceType = 0x01;
                 info.cmdType = 0x04;
-                SocketManager.getInstance().sendData(new Gson().toJson(info));
+//                SocketManager.getInstance().sendData(new Gson().toJson(info));
             }
         }, 5, 10, TimeUnit.SECONDS);
 
