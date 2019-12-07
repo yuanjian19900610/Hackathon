@@ -26,6 +26,9 @@ public class CmdConstantType {
     //支付成功
     public static final int CMD_PAY_SUCCESS= 0x19;
 
+    //支付失败
+    public static final int CMD_PAY_FAILED= 0x29;
+
 
 
 

@@ -184,7 +184,7 @@ public class SocketManager {
                     }
 //                    ServerRep serverRep = new Gson().fromJson(content, ServerRep.class);
                     //发送刷卡指令
-                        isEnable=false;
+//                        isEnable=false;
                        /* DeviceInfo  info = new DeviceInfo();
                         info.deviceMac = "20:59:a0:0e:58:c6";
                         info.deviceIp = "192.168.0.114";

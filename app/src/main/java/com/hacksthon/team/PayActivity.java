@@ -89,7 +89,7 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                 info.deviceIp = "192.168.0.114";
                 info.deviceInfo = "刷卡成功";
                 info.deviceType = 0x01;
-                info.cmdType = CmdConstantType.CMD_PAY_SUCCESS;
+                info.cmdType = CmdConstantType.CMD_PAY_FAILED;
                 SocketManager.getInstance().sendData(info);
 
             }
@@ -101,6 +101,13 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                     listener.onSuccess(responseBean);
                 }
                 Toast.makeText(getApplicationContext(),"支付成功",Toast.LENGTH_SHORT).show();
+                DeviceInfo info = new DeviceInfo();
+                info.deviceMac = "20:59:a0:0e:58:c6";
+                info.deviceIp = "192.168.0.114";
+                info.deviceInfo = "刷卡成功";
+                info.deviceType = 0x01;
+                info.cmdType = CmdConstantType.CMD_PAY_SUCCESS;
+                SocketManager.getInstance().sendData(info);
             }
         });
     }

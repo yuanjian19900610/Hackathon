@@ -53,10 +53,11 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
             info.deviceIp = "192.168.0.114";
             info.deviceInfo = "连接设备";
             info.deviceType = 0x01;
+            info.deviceStatus="在线";
             info.cmdType = CmdConstantType.CMD_CONNECT;
             SocketManager.getInstance().sendData(info);
             mHandler.removeMessages(0);
-            mHandler.sendEmptyMessageDelayed(0,5000);
+            mHandler.sendEmptyMessageDelayed(0,20000);
         }
     };
 
@@ -82,7 +83,7 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
                         }
                     });
                 } else if (serverRep.cmdType == CmdConstantType.CMD_CONNECT) {
-                    ToastUtils.showShort("连接成功");
+//                    ToastUtils.showShort("连接成功");
                 } else if (serverRep.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
                     ToastUtils.showShort("锁屏成功");
                 }
