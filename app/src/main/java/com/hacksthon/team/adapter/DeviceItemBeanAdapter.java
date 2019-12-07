@@ -40,6 +40,7 @@ public class DeviceItemBeanAdapter extends BaseQuickAdapter<DeviceInfo, BaseView
     protected void convert(BaseViewHolder helper, final DeviceInfo item) {
 
         helper.setText(R.id.tv_address, item.deviceIp);
+        helper.setText(R.id.tv_name, item.deviceName);
         helper.setText(R.id.tv_paper_status, item.deviceStatus);
         helper.setText(R.id.tv_device_mac_address, item.deviceMac);
 

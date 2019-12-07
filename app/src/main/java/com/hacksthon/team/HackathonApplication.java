@@ -26,8 +26,11 @@ import android.app.Application;
  */
 public class HackathonApplication extends Application{
 
+    public static HackathonApplication sContext;
+
     @Override
     public void onCreate() {
+        sContext = this;
         super.onCreate();
     }
 }

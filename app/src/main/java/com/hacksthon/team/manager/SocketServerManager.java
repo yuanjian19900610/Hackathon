@@ -5,7 +5,9 @@ import android.util.Log;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
+import com.hacksthon.team.HackathonApplication;
 import com.hacksthon.team.LockActivity;
+import com.hacksthon.team.R;
 import com.hacksthon.team.bean.CmdConstantType;
 import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
@@ -177,7 +179,7 @@ public class SocketServerManager {
                             serverRep.info = "收到连接";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("服务端》》连接指令收到");
+                          //  ToastUtils.showShort("服务端》》连接指令收到");
                             deviceInfo.deviceStatus = "连接正常";
                             EventBus.getDefault().post(new DeviceEvent(deviceInfo));
 
@@ -188,7 +190,7 @@ public class SocketServerManager {
                             serverRep.info = "锁屏";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("服务端》》锁屏指令收到");
+                          //  ToastUtils.showShort("服务端》》锁屏指令收到");
                             ActivityUtils.startActivity(LockActivity.class);
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PLAY_SOUND) {
@@ -198,7 +200,8 @@ public class SocketServerManager {
                             serverRep.info = "播放声音";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("服务端》》播放声音指令收到");
+                          //  ToastUtils.showShort("服务端》》播放声音指令收到");
+                            MediaPlayerManager.playerSound(HackathonApplication.sContext, R.raw.pos_sound);
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY) {
                             ServerRep resp=new ServerRep();
@@ -208,16 +211,16 @@ public class SocketServerManager {
                             resp.orderNo=System.currentTimeMillis()+"";
                             outputStream.write(new Gson().toJson(resp).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("请求刷卡。。。");
+                          //  ToastUtils.showShort("请求刷卡。。。");
 
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY_SUCCESS) {
                             Log.i("qinglin.fan", "SockertServerManager >>> 支付成功");
-                            ToastUtils.showShort("支付成功。。。");
+                           // ToastUtils.showShort("支付成功。。。");
                             EventBus.getDefault().post(new DevicePayEvent(deviceInfo));
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY_FAILED) {
-                            ToastUtils.showShort("支付失败。。。");
+                            //ToastUtils.showShort("支付失败。。。");
                             EventBus.getDefault().post(new DevicePayEvent(deviceInfo));
                         }
 

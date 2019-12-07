@@ -10,5 +10,6 @@ public class DeviceInfo {
     public String deviceInfo;
     public String deviceMac;//唯一设备地址
     public String deviceStatus;
+    public String deviceBattery;
 
 }
