@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 <!--        <activity android:name=".MainActivity"></activity>-->
-        <activity android:name=".HackathonClientMainActivity">
+        <activity android:name=".DeviceManagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
         <activity android:name=".PayActivity"/>
         <activity android:name=".LockActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".DeviceManagerActivity" />
+        <activity android:name=".HackathonClientMainActivity" />
 
         <service android:name=".SocketServer" />
     </application>
