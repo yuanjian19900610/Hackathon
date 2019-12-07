@@ -2,11 +2,14 @@ package com.hacksthon.team.manager;
 
 import android.text.TextUtils;
 import android.util.Log;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
+import com.hacksthon.team.LockActivity;
 import com.hacksthon.team.bean.CmdConstantType;
 import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
+import com.hacksthon.team.event.DeviceDisConnectEvent;
 import com.hacksthon.team.event.DeviceEvent;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.utils.Constants;
@@ -18,6 +21,8 @@ import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +50,9 @@ import org.greenrobot.eventbus.EventBus;
  *  </pre>
  */
 public class SocketServerManager {
+
+    public static Map<String, Socket> cacheSocketMap = new HashMap<>();
+    public static Map<String, Long> cacheTimes = new HashMap<>();
 
     private static final String TAG = SocketServerManager.class.getSimpleName();
     public static SocketServerManager manager;
@@ -124,11 +132,13 @@ public class SocketServerManager {
                 InetSocketAddress socketAddress = new InetSocketAddress(Constants.IPADDRESS, Constants.PORT);
                 mServerSocket = new ServerSocket();
                 mServerSocket.bind(socketAddress );
+                ToastUtils.showShort("服务启动");
                 while (isEnable) {
                     socket = mServerSocket.accept();
                     Log.d("hackson","服务器收到的数据:"+socket);
                    // threadPool.submit(new WorkThread());
-                    threadPool.submit(new DeviceThread(socket));
+                   // threadPool.submit();
+                    new DeviceThread(socket).start();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,20 +160,25 @@ public class SocketServerManager {
                     InputStream inputStream = socket.getInputStream();
                     byte buffer[] = new byte[1024 * 4];
                     int temp = 0;
+                    String mac = "";
                     while ((temp = inputStream.read(buffer)) != -1) {
                         String content = new String(buffer, 0, temp, "UTF-8");
 
                         DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
+                        mac = deviceInfo.deviceMac;
 
                         if (deviceInfo.cmdType == CmdConstantType.CMD_CONNECT) {
+
+                            cacheTimes.put(deviceInfo.deviceMac, System.currentTimeMillis());
+                            cacheSocketMap.put(deviceInfo.deviceMac, socket);
 
                             ServerRep serverRep = new ServerRep();
                             serverRep.cmdType = CmdConstantType.CMD_CONNECT;
                             serverRep.info = "收到连接";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("连接指令收到");
-
+                            ToastUtils.showShort("服务端》》连接指令收到");
+                            deviceInfo.deviceStatus = "连接正常";
                             EventBus.getDefault().post(new DeviceEvent(deviceInfo));
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
@@ -173,8 +188,8 @@ public class SocketServerManager {
                             serverRep.info = "锁屏";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("锁屏指令收到");
-
+                            ToastUtils.showShort("服务端》》锁屏指令收到");
+                            ActivityUtils.startActivity(LockActivity.class);
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PLAY_SOUND) {
 
@@ -183,10 +198,9 @@ public class SocketServerManager {
                             serverRep.info = "播放声音";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
-                            ToastUtils.showShort("服务端播放声音指令收到");
+                            ToastUtils.showShort("服务端》》播放声音指令收到");
 
-
-                        }else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY) {
+                        } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY) {
                             ServerRep resp=new ServerRep();
                             resp.cmdType=CmdConstantType.CMD_PAY;
                             resp.info="小龙坎火锅";
@@ -197,9 +211,15 @@ public class SocketServerManager {
                             ToastUtils.showShort("请求刷卡。。。");
 
 
+                        } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY_SUCCESS) {
+                            ToastUtils.showShort("支付成功。。。");
                         }
 
                     }
+                    Log.i("qinglin.fan", "设备已经断开");
+                    cacheTimes.remove(mac);
+                    cacheSocketMap.remove(mac);
+                    EventBus.getDefault().post(new DeviceDisConnectEvent(mac));
                     inputStream.close();
                     outputStream.close();
                     socket.close();

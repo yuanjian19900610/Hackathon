@@ -20,11 +20,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnPay= (Button) findViewById(R.id.btn_pay);
         btnDevicesManager.setOnClickListener(this);
         btnPay.setOnClickListener(this);
-        SocketServerManager serverManager = SocketServerManager.getInstance();
-        serverManager.setEnable(true);
-        serverManager.startScoketServer();
-
-
     }
 
     @Override

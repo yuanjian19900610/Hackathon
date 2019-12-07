@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".DeviceManagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +20,7 @@
         <activity android:name=".ServiceMainActivity"/>
         <activity android:name=".ClientMainActivity"/>
         <activity android:name=".PayActivity"/>
-        <activity android:name=".DeviceManagerActivity" />
+        <activity android:name=".LockActivity" />
 
         <service android:name=".SocketServer"/>
 
