@@ -11,9 +11,9 @@ import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.event.DeviceDisConnectEvent;
 import com.hacksthon.team.event.DeviceEvent;
+import com.hacksthon.team.event.DevicePayEvent;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.utils.Constants;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -212,7 +212,13 @@ public class SocketServerManager {
 
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY_SUCCESS) {
+                            Log.i("qinglin.fan", "SockertServerManager >>> 支付成功");
                             ToastUtils.showShort("支付成功。。。");
+                            EventBus.getDefault().post(new DevicePayEvent(deviceInfo));
+
+                        } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY_FAILED) {
+                            ToastUtils.showShort("支付失败。。。");
+                            EventBus.getDefault().post(new DevicePayEvent(deviceInfo));
                         }
 
                     }
