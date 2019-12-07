@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hacksthon.team">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:name=".HackathonApplication"
         android:allowBackup="true"
@@ -10,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DeviceManagerActivity">
+<!--        <activity android:name=".MainActivity"></activity>-->
+        <activity android:name=".HackathonClientMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,10 +25,10 @@
         <activity android:name=".ClientMainActivity"/>
         <activity android:name=".PayActivity"/>
         <activity android:name=".LockActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".DeviceManagerActivity" />
 
-        <service android:name=".SocketServer"/>
-
-
+        <service android:name=".SocketServer" />
     </application>
 
 </manifest>

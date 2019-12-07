@@ -102,14 +102,23 @@ public class SocketManager {
             if (mSocket != null) {
                 mSocket.close();
             }
+
+            if (inputStream != null) {
+                inputStream.close();
+            }
+
+            if (outputStream != null) {
+                outputStream.close();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void sendData(final DeviceInfo deviceInfo) {
-        this.mData=deviceInfo;
-        this.isEnable=true;
+        this.mData = deviceInfo;
+        this.isEnable = true;
         startSocket();
 //        try {
 //            Thread.sleep(2000);
@@ -126,14 +135,12 @@ public class SocketManager {
     }
 
 
-
-
     public void startSocket() {
         threadPool.submit(new WorkThread());
     }
 
 
-    private class  SendDataThread extends Thread{
+    private class SendDataThread extends Thread {
         @Override
         public void run() {
             super.run();
@@ -145,13 +152,13 @@ public class SocketManager {
                 outputStream.write(new Gson().toJson(mData).getBytes());
                 Log.d(TAG, "数据已发送");
                 outputStream.flush();
-                if(mData.cmdType==CmdConstantType.CMD_CONNECT){
+                if (mData.cmdType == CmdConstantType.CMD_CONNECT) {
                     Log.d(TAG, "发送连接数据指令");
                     startSocket();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 Log.d(TAG, "发送指令线程结束");
             }
         }
@@ -200,7 +207,7 @@ public class SocketManager {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                Log.d(TAG, "线程结束。。。。。。isEnable="+isEnable);
+                Log.d(TAG, "线程结束。。。。。。isEnable=" + isEnable);
 //                try {
 //                    if (inputStream != null) {
 //                        inputStream.close();

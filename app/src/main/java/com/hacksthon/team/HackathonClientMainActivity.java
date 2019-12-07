@@ -1,6 +1,7 @@
 package com.hacksthon.team;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +17,7 @@ import com.hacksthon.team.bean.CmdConstantType;
 import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.SocketListener;
+import com.hacksthon.team.manager.MediaPlayerManager;
 import com.hacksthon.team.manager.SocketManager;
 
 /**
@@ -86,6 +88,8 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
 //                    ToastUtils.showShort("连接成功");
                 } else if (serverRep.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
                     ToastUtils.showShort("锁屏成功");
+                }else if(serverRep.cmdType==CmdConstantType.CMD_PLAY_SOUND){
+                    MediaPlayerManager.playerSound(HackathonClientMainActivity.this,R.raw.sound);
                 }
             }
         });
@@ -109,5 +113,16 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SocketManager.getInstance().closeConnect();
+        if(mHandler!=null){
+            mHandler.removeMessages(0);
+            mHandler=null;
+        }
+
     }
 }
