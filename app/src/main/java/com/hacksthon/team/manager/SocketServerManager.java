@@ -5,15 +5,14 @@ import android.util.Log;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
-import com.hacksthon.team.HackathonApplication;
 import com.hacksthon.team.LockActivity;
-import com.hacksthon.team.R;
 import com.hacksthon.team.bean.CmdConstantType;
 import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.event.DeviceDisConnectEvent;
 import com.hacksthon.team.event.DeviceEvent;
 import com.hacksthon.team.event.DevicePayEvent;
+import com.hacksthon.team.event.DevicePlaySoundEvent;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.utils.Constants;
 import java.io.IOException;
@@ -180,13 +179,13 @@ public class SocketServerManager {
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
                           //  ToastUtils.showShort("服务端》》连接指令收到");
-                            deviceInfo.deviceStatus = "连接正常";
+                           // deviceInfo.deviceStatus = "连接正常";
                             EventBus.getDefault().post(new DeviceEvent(deviceInfo));
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
 
                             ServerRep serverRep = new ServerRep();
-                            serverRep.cmdType = CmdConstantType.CMD_CLOSE_SCREEN;
+                            serverRep.cmdType = CmdConstantType.CMD_CONFIRM_RECEIVE;
                             serverRep.info = "锁屏";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
@@ -196,16 +195,16 @@ public class SocketServerManager {
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PLAY_SOUND) {
 
                             ServerRep serverRep = new ServerRep();
-                            serverRep.cmdType = CmdConstantType.CMD_PLAY_SOUND;
+                            serverRep.cmdType = CmdConstantType.CMD_CONFIRM_RECEIVE;
                             serverRep.info = "播放声音";
                             outputStream.write(new Gson().toJson(serverRep).getBytes("utf-8"));
                             outputStream.flush();
                           //  ToastUtils.showShort("服务端》》播放声音指令收到");
-                            MediaPlayerManager.playerSound(HackathonApplication.sContext, R.raw.pos_sound);
+                            EventBus.getDefault().post(new DevicePlaySoundEvent());
 
                         } else if (deviceInfo.cmdType == CmdConstantType.CMD_PAY) {
                             ServerRep resp=new ServerRep();
-                            resp.cmdType=CmdConstantType.CMD_PAY;
+                            resp.cmdType=CmdConstantType.CMD_CONFIRM_RECEIVE;
                             resp.info="小龙坎火锅";
                             resp.amount=new BigDecimal(0.01).setScale(2,BigDecimal.ROUND_HALF_UP);
                             resp.orderNo=System.currentTimeMillis()+"";

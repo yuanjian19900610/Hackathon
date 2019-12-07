@@ -15,6 +15,8 @@ import com.hacksthon.team.bean.ServerRep
 import com.hacksthon.team.event.DeviceDisConnectEvent
 import com.hacksthon.team.event.DeviceEvent
 import com.hacksthon.team.event.DevicePayEvent
+import com.hacksthon.team.event.DevicePlaySoundEvent
+import com.hacksthon.team.manager.MediaPlayerManager
 import com.hacksthon.team.manager.SocketServerManager
 import com.hacksthon.team.utils.RecyclerViewUtil
 import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener
@@ -168,6 +170,7 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
     }
 
+
     var list = ArrayList<DeviceInfo>()
     var adapter = DeviceItemBeanAdapter(R.layout.layout_device_item)
     var serverManager: SocketServerManager? = null
@@ -178,6 +181,10 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device)
+        val actionbar = supportActionBar
+        if (actionbar != null) {
+            actionbar.hide()
+        }
         registerEventBus()
         serverManager = SocketServerManager.getInstance()
         serverManager!!.setEnable(true)
@@ -189,31 +196,31 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
         // 设置亮色
         DialogSettings.theme = DialogSettings.THEME.LIGHT
         DialogSettings.tipTheme = DialogSettings.THEME.LIGHT
-
-        handler = Handler()
-        runnable = Runnable {
-            val iter = list.iterator()
-            while (iter.hasNext()) {
-                val device = iter.next()
-                val mac = device.deviceMac
-                if (isSocketClosed(mac)) {
-                    device.deviceStatus = "离线"
-                } else {
-                    if (SocketServerManager.cacheTimes.containsKey(mac)) {
-                        val cacheTime = SocketServerManager.cacheTimes.get(mac)
-                        if (System.currentTimeMillis() - cacheTime!! > (1000*60) ) {
-                            Log.i("qinglin.fan", "该设备已经离线" + device.deviceInfo)
-                            device.deviceStatus = "离线"
-                        } else {
-                            device.deviceStatus = "在线"
-                        }
-                    }
-                }
-            }
-            adapter.notifyDataSetChanged()
-            handler!!.postDelayed(runnable, 60*1000)
-        }
-        handler!!.postDelayed(runnable, 60*1000)
+//
+//        handler = Handler()
+//        runnable = Runnable {
+//            val iter = list.iterator()
+//            while (iter.hasNext()) {
+//                val device = iter.next()
+//                val mac = device.deviceMac
+//                if (isSocketClosed(mac)) {
+//                    device.deviceStatus = "离线"
+//                } else {
+//                    if (SocketServerManager.cacheTimes.containsKey(mac)) {
+//                        val cacheTime = SocketServerManager.cacheTimes.get(mac)
+//                        if (System.currentTimeMillis() - cacheTime!! > (1000*60) ) {
+//                            Log.i("qinglin.fan", "该设备已经离线" + device.deviceInfo)
+//                            device.deviceStatus = "离线"
+//                        } else {
+//                            device.deviceStatus = "在线"
+//                        }
+//                    }
+//                }
+//            }
+//            adapter.notifyDataSetChanged()
+//            handler!!.postDelayed(runnable, 60*1000)
+//        }
+//        handler!!.postDelayed(runnable, 60*1000)
     }
 
     private fun isSocketClosed(key: String) : Boolean{
@@ -240,6 +247,8 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshEvent(event: DeviceEvent) {
+        Log.i("qinglin.fan", "onRefreshEvent >>" + event.mDeviceInfo)
+
         val deviceInfo = event.mDeviceInfo
         var position = -1
 
@@ -250,13 +259,16 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
                 for (i in 0..list.size) {
                     var item = list[i]
                     if (item.deviceMac.equals(deviceInfo.deviceMac)) {
-                        item = deviceInfo
+                      //  item = deviceInfo
+                        position = i
                         find = true
                         break
                     }
                 }
                 if (!find) {
                     list.add(deviceInfo)
+                } else {
+                    list[position] = deviceInfo
                 }
             } else {
                 list.add(deviceInfo)
@@ -266,7 +278,9 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshEvent(event: DeviceDisConnectEvent) {
+    fun onRefreshDisconnectEvent(event: DeviceDisConnectEvent) {
+
+        Log.i("qinglin.fan", "onRefreshDisconnectEvent >>")
         val mac = event.mac
         var position = -1
 
@@ -288,6 +302,11 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
             }
             adapter.notifyDataSetChanged()
         }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPlayEvent(event: DevicePlaySoundEvent) {
+        MediaPlayerManager.playerSound(this@DeviceManagerActivity, R.raw.pos_sound)
+
     }
 
 
