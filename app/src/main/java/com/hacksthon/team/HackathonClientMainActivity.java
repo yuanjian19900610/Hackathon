@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -64,7 +65,7 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
             info.cmdType = CmdConstantType.CMD_CONNECT;
             SocketManager.getInstance().sendData(info);
             mHandler.removeMessages(0);
-            mHandler.sendEmptyMessageDelayed(0, 20000);
+            mHandler.sendEmptyMessageDelayed(0, 3000);
         }
     };
 
@@ -72,6 +73,7 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hackathon_client_main);
+        getSupportActionBar().hide();
         macAddress = SystemUtils.getDeviceIDByMac(this);
         mBtnLock = (Button) findViewById(R.id.btn_lock);
         mBtnPlayer = (Button) findViewById(R.id.btn_player);
@@ -102,7 +104,7 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
             }
         });
 
-        mHandler.sendEmptyMessageDelayed(0, 2000);
+        mHandler.sendEmptyMessageDelayed(0, 1000);
 
     }
 

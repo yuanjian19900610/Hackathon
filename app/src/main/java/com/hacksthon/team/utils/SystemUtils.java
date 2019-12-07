@@ -280,9 +280,9 @@ public class SystemUtils {
             return "小米";
         }
 
-        if("20:59:a0:0e:58:c6".equals(macAddress)){
+        if("20:59:A0:0E:58:C6".toUpperCase().equals(macAddress)){
             return "手持终端红";
-        }else if("20:59:a0:10:b3:db".equals(macAddress)){
+        }else if("20:59:a0:10:b3:db".toUpperCase().equals(macAddress)){
             return "手持终端白";
         }else{
             return "小米";
@@ -294,9 +294,9 @@ public class SystemUtils {
             return "40%";
         }
 
-        if("20:59:a0:0e:58:c6".equals(macAddress)){
+        if("20:59:A0:0E:58:C6".toUpperCase().equals(macAddress)){
             return "60%";
-        }else if("20:59:a0:10:b3:db".equals(macAddress)){
+        }else if("20:59:a0:10:b3:db".toUpperCase().equals(macAddress)){
             return "80%";
         }else{
             return "40%";

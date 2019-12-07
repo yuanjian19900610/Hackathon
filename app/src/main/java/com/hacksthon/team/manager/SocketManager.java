@@ -138,6 +138,7 @@ public class SocketManager {
                     mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
                 }
                 outputStream = mSocket.getOutputStream();
+                Log.i(TAG, "客服端发出的数据：" + new Gson().toJson(mData));
                 outputStream.write(new Gson().toJson(mData).getBytes());
                 outputStream.flush();
                 while (isEnable) {

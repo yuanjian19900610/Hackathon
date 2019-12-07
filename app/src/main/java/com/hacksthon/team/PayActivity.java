@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,26 +32,26 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
     private static final String TAG=PayActivity.class.getSimpleName();
     private TextView tvPayInfo;
     private Button btnSure;
-    private SocketManager mSocketManager;
+    private ServerRep  serverRep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
+        getSupportActionBar().hide();
         tvPayInfo= (TextView) findViewById(R.id.tv_payinfo);
         btnSure= (Button) findViewById(R.id.btn_sure);
         btnSure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pay(new BigDecimal(0.01));
+                pay(serverRep.amount);
             }
         });
-//        ServerRep  serverRep = (ServerRep) getIntent().getSerializableExtra(PAY_INFO);
-//        StringBuilder sb=new StringBuilder();
-//        sb.append("订单号："+serverRep.orderNo+"\n");
-//        sb.append("订单金额："+serverRep.amount+"\n");
-//        sb.append("说明："+serverRep.info+"\n");
-//        tvPayInfo.setText(sb.toString());
-//        startSocket();
+        serverRep = (ServerRep) getIntent().getSerializableExtra(PAY_INFO);
+        StringBuilder sb=new StringBuilder();
+        sb.append("订单号："+serverRep.orderNo+"\n");
+        sb.append("订单金额："+serverRep.amount+"\n");
+        sb.append("说明："+serverRep.info+"\n");
+        tvPayInfo.setText(sb.toString());
     }
 
 
@@ -91,6 +92,7 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                 info.deviceType = 0x01;
                 info.cmdType = CmdConstantType.CMD_PAY_FAILED;
                 SocketManager.getInstance().sendData(info);
+                finish();
 
             }
 
@@ -108,6 +110,7 @@ public class PayActivity extends AppCompatActivity implements KayouPayListener {
                 info.deviceType = 0x01;
                 info.cmdType = CmdConstantType.CMD_PAY_SUCCESS;
                 SocketManager.getInstance().sendData(info);
+                finish();
             }
         });
     }
