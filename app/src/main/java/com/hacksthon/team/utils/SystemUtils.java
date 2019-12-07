@@ -273,4 +273,35 @@ public class SystemUtils {
 
     }
 
+//    20:59:a0:0e:58:c6
+
+    public static String getDevicesName(String macAddress){
+        if(TextUtils.isEmpty(macAddress)){
+            return "小米";
+        }
+
+        if("20:59:a0:0e:58:c6".equals(macAddress)){
+            return "手持终端红";
+        }else if("20:59:a0:10:b3:db".equals(macAddress)){
+            return "手持终端白";
+        }else{
+            return "小米";
+        }
+    }
+
+    public static String getDeviceBattery(String macAddress){
+        if(TextUtils.isEmpty(macAddress)){
+            return "40%";
+        }
+
+        if("20:59:a0:0e:58:c6".equals(macAddress)){
+            return "60%";
+        }else if("20:59:a0:10:b3:db".equals(macAddress)){
+            return "80%";
+        }else{
+            return "40%";
+        }
+    }
+
+
 }

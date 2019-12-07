@@ -19,6 +19,7 @@ import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.manager.MediaPlayerManager;
 import com.hacksthon.team.manager.SocketManager;
+import com.hacksthon.team.utils.SystemUtils;
 
 /**
  * <pre>
@@ -45,21 +46,25 @@ import com.hacksthon.team.manager.SocketManager;
 public class HackathonClientMainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button mBtnLock;
+    private Button mBtnPlayer;
+    private String macAddress;
 
-    private Handler mHandler=new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             DeviceInfo info = new DeviceInfo();
-            info.deviceMac = "20:59:a0:0e:58:c6";
+            info.deviceMac = macAddress;
             info.deviceIp = "192.168.0.114";
+            info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
+            info.deviceName = SystemUtils.getDevicesName(macAddress);
             info.deviceInfo = "连接设备";
             info.deviceType = 0x01;
-            info.deviceStatus="在线";
+            info.deviceStatus = "在线";
             info.cmdType = CmdConstantType.CMD_CONNECT;
             SocketManager.getInstance().sendData(info);
             mHandler.removeMessages(0);
-            mHandler.sendEmptyMessageDelayed(0,20000);
+            mHandler.sendEmptyMessageDelayed(0, 20000);
         }
     };
 
@@ -67,8 +72,11 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hackathon_client_main);
+        macAddress = SystemUtils.getDeviceIDByMac(this);
         mBtnLock = (Button) findViewById(R.id.btn_lock);
+        mBtnPlayer = (Button) findViewById(R.id.btn_player);
         mBtnLock.setOnClickListener(this);
+        mBtnPlayer.setOnClickListener(this);
 
         SocketManager.getInstance().setSocketListener(new SocketListener() {
             @Override
@@ -88,28 +96,43 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
 //                    ToastUtils.showShort("连接成功");
                 } else if (serverRep.cmdType == CmdConstantType.CMD_CLOSE_SCREEN) {
                     ToastUtils.showShort("锁屏成功");
-                }else if(serverRep.cmdType==CmdConstantType.CMD_PLAY_SOUND){
-                    MediaPlayerManager.playerSound(HackathonClientMainActivity.this,R.raw.sound);
+                } else if (serverRep.cmdType == CmdConstantType.CMD_PLAY_SOUND) {
+                    MediaPlayerManager.playerSound(HackathonClientMainActivity.this, R.raw.sound);
                 }
             }
         });
 
-        mHandler.sendEmptyMessageDelayed(0,2000);
+        mHandler.sendEmptyMessageDelayed(0, 2000);
 
     }
 
     @Override
     public void onClick(View v) {
+        DeviceInfo info = null;
         switch (v.getId()) {
             case R.id.btn_lock:
-                DeviceInfo info = new DeviceInfo();
-                info.deviceMac = "20:59:a0:0e:58:c6";
+                info = new DeviceInfo();
+                info.deviceMac = macAddress;
+                info.deviceName = SystemUtils.getDevicesName(macAddress);
                 info.deviceIp = "192.168.0.114";
                 info.deviceInfo = "锁屏";
+                info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
                 info.deviceType = 0x01;
                 info.cmdType = CmdConstantType.CMD_CLOSE_SCREEN;
                 SocketManager.getInstance().sendData(info);
                 break;
+            case R.id.btn_player:
+                info = new DeviceInfo();
+                info.deviceMac = macAddress;
+                info.deviceName = SystemUtils.getDevicesName(macAddress);
+                info.deviceIp = "192.168.0.114";
+                info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
+                info.deviceInfo = "播放音频";
+                info.deviceType = 0x01;
+                info.cmdType = CmdConstantType.CMD_PLAY_SOUND;
+                SocketManager.getInstance().sendData(info);
+                break;
+
             default:
                 break;
         }
@@ -119,9 +142,9 @@ public class HackathonClientMainActivity extends AppCompatActivity implements Vi
     protected void onDestroy() {
         super.onDestroy();
         SocketManager.getInstance().closeConnect();
-        if(mHandler!=null){
+        if (mHandler != null) {
             mHandler.removeMessages(0);
-            mHandler=null;
+            mHandler = null;
         }
 
     }

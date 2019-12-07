@@ -45,6 +45,7 @@
         android:textStyle="bold" />
 
     <Button
+        android:id="@+id/btn_player"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="150dp"
@@ -62,6 +63,6 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/icon_logo"/>
+        android:src="@mipmap/keruyun_logo"/>
 
 </LinearLayout>

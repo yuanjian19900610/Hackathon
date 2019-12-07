@@ -11,6 +11,9 @@ public class CmdConstantType {
     //播放声音
     public static final int CMD_PLAY_SOUND = 0x02;
 
+    //播放声音
+    public static final int CMD_PLAY_SOUND_RECEVICE = 0x22;
+
     //连接
     public static final int CMD_CONNECT = 0x04;
 
