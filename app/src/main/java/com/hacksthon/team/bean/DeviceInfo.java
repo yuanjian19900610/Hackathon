@@ -12,17 +12,17 @@ public class DeviceInfo {
     public String deviceStatus;
     public String deviceBattery;
 
-//    @Override
-//    public String toString() {
-//        return "DeviceInfo{" +
-//                "cmdType=" + cmdType +
-//                ", deviceType=" + deviceType +
-//                ", deviceName='" + deviceName + '\'' +
-//                ", deviceIp='" + deviceIp + '\'' +
-//                ", deviceInfo='" + deviceInfo + '\'' +
-//                ", deviceMac='" + deviceMac + '\'' +
-//                ", deviceStatus='" + deviceStatus + '\'' +
-//                ", deviceBattery='" + deviceBattery + '\'' +
-//                '}';
-//    }
+    @Override
+    public String toString() {
+        return "DeviceInfo{" +
+                "cmdType=" + cmdType +
+                ", deviceType=" + deviceType +
+                ", deviceName='" + deviceName + '\'' +
+                ", deviceIp='" + deviceIp + '\'' +
+                ", deviceInfo='" + deviceInfo + '\'' +
+                ", deviceMac='" + deviceMac + '\'' +
+                ", deviceStatus='" + deviceStatus + '\'' +
+                ", deviceBattery='" + deviceBattery + '\'' +
+                '}';
+    }
 }

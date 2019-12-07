@@ -256,7 +256,7 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
             var find = false
             if (list.size > 0) {
-                for (i in 0..list.size) {
+                for (i in 0..list.size-1) {
                     var item = list[i]
                     if (item.deviceMac.equals(deviceInfo.deviceMac)) {
                       //  item = deviceInfo

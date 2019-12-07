@@ -156,9 +156,24 @@ public class SocketServerManager {
         public void run() {
             if (mSocket != null) {
                 try {
+                    /**
+                     * socket>>address Socket[address=/10.180.6.249,port=37676,localPort=9990]
+                     * 2019-12-07 20:58:36.572 18236-18294/com.hacksthon.team I/qinglin.fan: outputStream>>address java.net.SocketOutputStream@a962458
+                     * 2019-12-07 20:58:36.572 18236-18294/com.hacksthon.team I/qinglin.fan: inputStream>>address java.net.SocketInputStream@51079b1
+                     */
+                    /**
+                     * inglin.fan: socket>>address Socket[address=/10.180.7.219,port=53194,localPort=9990]
+                     * 2019-12-07 20:59:09.611 18236-18306/com.hacksthon.team I/qinglin.fan: outputStream>>address java.net.SocketOutputStream@6fa52da
+                     * 2019-12-07 20:59:09.611 18236-18306/com.hacksthon.team I/qinglin.fan: inputStream>>address java.net.SocketInputStream@c6fe30b
+                     */
 
-                    OutputStream outputStream = socket.getOutputStream();
-                    InputStream inputStream = socket.getInputStream();
+                    OutputStream outputStream = mSocket.getOutputStream();
+                    InputStream inputStream = mSocket.getInputStream();
+
+                    Log.i("qinglin.fan", "socket>>address " + mSocket);
+                    Log.i("qinglin.fan", "outputStream>>address " + outputStream);
+                    Log.i("qinglin.fan", "inputStream>>address " + inputStream);
+
                     byte buffer[] = new byte[1024 * 4];
                     int temp = 0;
                     String mac = "";
@@ -171,7 +186,7 @@ public class SocketServerManager {
                         if (deviceInfo.cmdType == CmdConstantType.CMD_CONNECT) {
 
                             cacheTimes.put(deviceInfo.deviceMac, System.currentTimeMillis());
-                            cacheSocketMap.put(deviceInfo.deviceMac, socket);
+                            cacheSocketMap.put(deviceInfo.deviceMac, mSocket);
 
                             ServerRep serverRep = new ServerRep();
                             serverRep.cmdType = CmdConstantType.CMD_CONNECT;
@@ -225,12 +240,12 @@ public class SocketServerManager {
 
                     }
                     Log.i("qinglin.fan", "设备已经断开");
+                    EventBus.getDefault().post(new DeviceDisConnectEvent(mac));
                     cacheTimes.remove(mac);
                     cacheSocketMap.remove(mac);
-                    EventBus.getDefault().post(new DeviceDisConnectEvent(mac));
                     inputStream.close();
                     outputStream.close();
-                    socket.close();
+                    mSocket.close();
 
                 } catch (IOException e) {
                     e.printStackTrace();
