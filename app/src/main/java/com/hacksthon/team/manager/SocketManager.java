@@ -104,9 +104,7 @@ public class SocketManager {
 
     public void closeConnect() {
         try {
-            if (mSocket != null) {
-                mSocket.close();
-            }
+
 
             if (inputStream != null) {
                 inputStream.close();
@@ -114,6 +112,11 @@ public class SocketManager {
 
             if (outputStream != null) {
                 outputStream.close();
+            }
+
+            if (mSocket != null) {
+                mSocket.close();
+                mSocket=null;
             }
 
         } catch (IOException e) {
@@ -148,7 +151,7 @@ public class SocketManager {
                 }
                 outputStream = mSocket.getOutputStream();
                 Log.i(TAG, "客服端发出的数据：" + new Gson().toJson(mData));
-                outputStream.write(new Gson().toJson(mData).getBytes());
+                outputStream.write(new Gson().toJson(mData).getBytes("UTF-8"));
                 outputStream.flush();
                 while (isEnable) {
                     if (mSocket == null || !mSocket.isConnected()) {
