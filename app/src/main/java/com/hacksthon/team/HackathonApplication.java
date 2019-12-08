@@ -1,10 +1,6 @@
 package com.hacksthon.team;
 
 import android.app.Application;
-import android.text.TextUtils;
-
-import com.hacksthon.team.utils.Constants;
-import com.hacksthon.team.utils.SharedPreferencesUtil;
 
 /**
  * <pre>
@@ -37,4 +33,6 @@ public class HackathonApplication extends Application{
         sContext = this;
         super.onCreate();
     }
+
+
 }

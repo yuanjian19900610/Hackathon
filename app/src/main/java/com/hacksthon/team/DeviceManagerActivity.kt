@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.google.gson.Gson
 import com.hacksthon.team.adapter.DeviceItemBeanAdapter
@@ -19,7 +20,6 @@ import com.hacksthon.team.event.DevicePlaySoundEvent
 import com.hacksthon.team.manager.MediaPlayerManager
 import com.hacksthon.team.manager.SocketServerManager
 import com.hacksthon.team.utils.RecyclerViewUtil
-import com.hacksthon.team.utils.SystemUtils
 import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener
 import com.kongzue.dialog.util.BaseDialog
 import com.kongzue.dialog.util.DialogSettings
@@ -187,7 +187,8 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
             actionbar.hide()
         }
         registerEventBus()
-        val ip = SystemUtils.getIpAddress(HackathonApplication.sContext)
+        val ip = NetworkUtils.getIpAddressByWifi()
+        Log.i("qinglin.fan", "server ip >>>> " + ip)
         serverManager = SocketServerManager.getInstance()
         serverManager!!.setEnable(true)
         serverManager!!.startScoketServer(ip)
@@ -211,7 +212,7 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
                 } else {
                     if (SocketServerManager.cacheTimes.containsKey(mac)) {
                         val cacheTime = SocketServerManager.cacheTimes.get(mac)
-                        if (System.currentTimeMillis() - cacheTime!! > (1000*60) ) {
+                        if (System.currentTimeMillis() - cacheTime!! > (1000*20) ) {
                             Log.i("qinglin.fan", "该设备已经离线" + device.deviceInfo)
                             device.deviceStatus = "离线"
                         } else {
@@ -221,9 +222,9 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
                 }
             }
             adapter.notifyDataSetChanged()
-            handler!!.postDelayed(runnable, 60*1000)
+            handler!!.postDelayed(runnable, 10*1000)
         }
-        handler!!.postDelayed(runnable, 60*1000)
+        handler!!.postDelayed(runnable, 10*1000)
     }
 
     private fun isSocketClosed(key: String) : Boolean{
@@ -263,7 +264,7 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
             var find = false
             if (list.size > 0) {
-                for (i in 0..list.size-1) {
+                for (i in 0..list.size-1 ) {
                     var item = list[i]
                     if (item.deviceMac.equals(deviceInfo.deviceMac)) {
                       //  item = deviceInfo
@@ -295,16 +296,18 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
             var find = false
             if (list.size > 0) {
-                for (i in 0..list.size) {
+                for (i in 0..list.size-1) {
                     var item = list[i]
                     if (item.deviceMac.equals(mac)) {
                         position = i
                         find = true
-                        item.deviceStatus = "离线"
+                      //  item.deviceStatus = "离线"
                         break
                     }
                 }
-               // if (find) list.removeAt(position)
+                if (find)  list[position].deviceStatus = "离线"
+                Log.i("qinglin.fan", ">>>>>>" + list)
+                // if (find) list.removeAt(position)
 
             }
             adapter.notifyDataSetChanged()

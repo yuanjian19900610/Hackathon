@@ -49,6 +49,12 @@ public class DeviceItemBeanAdapter extends BaseQuickAdapter<DeviceInfo, BaseView
         helper.setText(R.id.tv_paper_status, item.deviceStatus);
         helper.setText(R.id.tv_device_mac_address, item.deviceMac);
 
+        if (item.deviceType != null && item.deviceType == 1)  {
+            helper.getView(R.id.swipe_card).setVisibility(View.VISIBLE);
+        } else {
+            helper.getView(R.id.swipe_card).setVisibility(View.GONE);
+        }
+
         if (item.deviceStatus.trim().equals("离线")){
             helper.getView(R.id.play_sound).setEnabled(false);
             helper.getView(R.id.swipe_card).setEnabled(false);

@@ -185,6 +185,7 @@ public class SocketServerManager {
                     String mac = "";
                     while ((temp = inputStream.read(buffer)) != -1) {
                         String content = new String(buffer, 0, temp, "UTF-8");
+                        Log.i("qinglin.fan", "content >>>> " + content);
 
                         DeviceInfo deviceInfo = new Gson().fromJson(content, DeviceInfo.class);
                         mac = deviceInfo.deviceMac;
@@ -252,6 +253,7 @@ public class SocketServerManager {
                     inputStream.close();
                     outputStream.close();
                     mSocket.close();
+                    mSocket = null;
 
                 } catch (IOException e) {
                     e.printStackTrace();
