@@ -17,6 +17,7 @@ import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.manager.SocketManager;
 import com.hacksthon.team.utils.Constants;
+import com.hacksthon.team.utils.SharedPreferencesUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 OutputStream outputStream = null;
                 InputStream inputStream = null;
                 try {
-                    Socket socket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                    Socket socket = new Socket(SharedPreferencesUtil.getInstance(getApplicationContext()).getSP(Constants.IPADDRESS), Constants.PORT);
                     Log.d("smarhit", "socket isconnect=" + socket.isConnected());
                     DeviceInfo info = new DeviceInfo();
                     info.deviceMac = "20:59:a0:0e:58:c6";

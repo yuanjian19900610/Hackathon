@@ -303,5 +303,19 @@ public class SystemUtils {
         }
     }
 
+    public static String getDeviceIpAddress(String macAddress){
+        if(TextUtils.isEmpty(macAddress)){
+            return "10.180.1.125";
+        }
+
+        if("20:59:A0:0E:58:C6".toUpperCase().equals(macAddress)){
+            return "10.180.1.145";
+        }else if("20:59:a0:10:b3:db".toUpperCase().equals(macAddress)){
+            return "10.180.6.15";
+        }else{
+            return "10.180.1.125";
+        }
+    }
+
 
 }

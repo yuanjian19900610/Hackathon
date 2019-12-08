@@ -62,6 +62,7 @@ public class SocketServerManager {
     private ServerSocket mServerSocket;
     private Socket socket;
     private SocketListener mSocketListener;
+    private  String ipAddress;
 
 
     public static SocketServerManager getInstance() {
@@ -78,6 +79,10 @@ public class SocketServerManager {
     }
 
 
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
     public void setSocketListener(SocketListener socketListener) {
         this.mSocketListener = socketListener;
     }
@@ -85,7 +90,8 @@ public class SocketServerManager {
     /**
      * 开启socketServer
      */
-    public void startScoketServer() {
+    public void startScoketServer(String ipAddress) {
+        this.ipAddress=ipAddress;
         Log.d("smarhit","开启了socketServer");
         MonitorThread monitorThread = new MonitorThread();
         monitorThread.start();
@@ -130,7 +136,7 @@ public class SocketServerManager {
             super.run();
             try {
 //                InetSocketAddress socketAddress = new InetSocketAddress(mConfig.getPort());
-                InetSocketAddress socketAddress = new InetSocketAddress(Constants.IPADDRESS, Constants.PORT);
+                InetSocketAddress socketAddress = new InetSocketAddress(ipAddress, Constants.PORT);
                 mServerSocket = new ServerSocket();
                 mServerSocket.bind(socketAddress );
                 ToastUtils.showShort("服务启动");

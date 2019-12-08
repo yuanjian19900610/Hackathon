@@ -18,7 +18,9 @@ import com.hacksthon.team.event.DevicePayEvent
 import com.hacksthon.team.event.DevicePlaySoundEvent
 import com.hacksthon.team.manager.MediaPlayerManager
 import com.hacksthon.team.manager.SocketServerManager
+import com.hacksthon.team.utils.Constants
 import com.hacksthon.team.utils.RecyclerViewUtil
+import com.hacksthon.team.utils.SharedPreferencesUtil
 import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener
 import com.kongzue.dialog.util.BaseDialog
 import com.kongzue.dialog.util.DialogSettings
@@ -188,7 +190,7 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
         registerEventBus()
         serverManager = SocketServerManager.getInstance()
         serverManager!!.setEnable(true)
-        serverManager!!.startScoketServer()
+        serverManager!!.startScoketServer(SharedPreferencesUtil.getInstance(applicationContext).getSP(Constants.IPADDRESS))
         adapter.setOnAdapterClick(this)
 
         // 设置IOS风格

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.manager.SocketServerManager;
 import com.hacksthon.team.utils.Constants;
+import com.hacksthon.team.utils.SharedPreferencesUtil;
 
 public class ServiceMainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,7 +38,7 @@ public class ServiceMainActivity extends AppCompatActivity implements View.OnCli
 //        serverManager.setSocketConfig(new SocketConfig(Constants.PORT));
         serverManager.setEnable(true);
       //  serverManager.stopSocketServer();
-        serverManager.startScoketServer();
+        serverManager.startScoketServer(SharedPreferencesUtil.getInstance(getApplicationContext()).getSP(Constants.IPADDRESS));
         serverManager.setSocketListener(new SocketListener() {
             @Override
             public void receiveData(final String Data) {

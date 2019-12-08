@@ -13,6 +13,7 @@ import com.hacksthon.team.bean.DeviceInfo;
 import com.hacksthon.team.bean.ServerRep;
 import com.hacksthon.team.interfaces.SocketListener;
 import com.hacksthon.team.utils.Constants;
+import com.hacksthon.team.utils.SharedPreferencesUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +58,7 @@ public class SocketManager {
     private OutputStream outputStream = null;
     private InputStream inputStream = null;
     private DeviceInfo mData;
+    private  String ipAddress;
 
     public static SocketManager getInstance() {
         if (mSocketManager == null) {
@@ -74,6 +76,10 @@ public class SocketManager {
 
     public void setSocket(Socket socket) {
         this.mSocket = socket;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public void setSocketListener(SocketListener socketListener) {
@@ -135,7 +141,7 @@ public class SocketManager {
             super.run();
             try {
                 if (mSocket == null || !mSocket.isConnected()) {
-                    mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                    mSocket = new Socket(ipAddress, Constants.PORT);
                 }
                 outputStream = mSocket.getOutputStream();
                 Log.i(TAG, "客服端发出的数据：" + new Gson().toJson(mData));
@@ -143,7 +149,7 @@ public class SocketManager {
                 outputStream.flush();
                 while (isEnable) {
                     if (mSocket == null || !mSocket.isConnected()) {
-                        mSocket = new Socket(Constants.IPADDRESS, Constants.PORT);
+                        mSocket = new Socket(ipAddress, Constants.PORT);
                     }
                     inputStream = mSocket.getInputStream();
                     byte[] buff = new byte[1024];

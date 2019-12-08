@@ -22,11 +22,12 @@ package com.hacksthon.team.utils;
  * *-------------------------------------------------------------------*
  *  </pre>
  */
-public interface Constants {
+public class Constants {
 
  //   int PORT = 8081;
  //   String IPADDRESS = "10.180.1.124";
-   int PORT = 9990;
-   String IPADDRESS = "10.180.6.241";
+   public static int PORT = 9990;
+    public static String IPADDRESS = "Service_ipAddress";
+//    public static String DEF_IP = "10.180.6.241";
 
 }
