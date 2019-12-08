@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hacksthon.team">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".HackathonApplication"
@@ -13,22 +16,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<!--        <activity android:name=".MainActivity"></activity>-->
-        <activity android:name=".DeviceManagerActivity">
+        <!--        <activity android:name=".MainActivity"></activity>-->
+        <activity android:name=".HackathonClientMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ServiceMainActivity"/>
-        <activity android:name=".ClientMainActivity"/>
-        <activity android:name=".PayActivity"/>
+        <activity android:name=".ServiceMainActivity" />
+        <activity android:name=".ClientMainActivity" />
+        <activity android:name=".PayActivity" />
         <activity android:name=".LockActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".HackathonClientMainActivity" />
+        <activity android:name=".DeviceManagerActivity" />
 
         <service android:name=".SocketServer" />
+
+        <receiver android:name=".receivers.BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <category android:name="android.intent.category.HOME" />
+
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

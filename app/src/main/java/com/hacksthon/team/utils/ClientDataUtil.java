@@ -37,7 +37,7 @@ public class ClientDataUtil {
         info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
         info.deviceName = SystemUtils.getDevicesName(macAddress);
         info.deviceInfo = "连接设备";
-        info.deviceType = 0x01;
+        info.deviceType = SystemUtils.getDevicesType(macAddress);
         info.deviceStatus = "在线";
         info.cmdType = CmdConstantType.CMD_CONNECT;
         return info;
@@ -51,7 +51,7 @@ public class ClientDataUtil {
         info.deviceIp = SystemUtils.getDeviceIpAddress(macAddress);
         info.deviceInfo = "锁屏";
         info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
-        info.deviceType = 0x01;
+        info.deviceType = SystemUtils.getDevicesType(macAddress);
         info.cmdType = CmdConstantType.CMD_CLOSE_SCREEN;
         return info;
     }
@@ -65,7 +65,7 @@ public class ClientDataUtil {
         info.deviceIp = SystemUtils.getDeviceIpAddress(macAddress);
         info.deviceBattery=SystemUtils.getDeviceBattery(macAddress);
         info.deviceInfo = "播放音频";
-        info.deviceType = 0x01;
+        info.deviceType = SystemUtils.getDevicesType(macAddress);
         info.cmdType = CmdConstantType.CMD_PLAY_SOUND;
         return info;
     }

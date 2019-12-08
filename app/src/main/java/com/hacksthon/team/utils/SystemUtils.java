@@ -317,5 +317,19 @@ public class SystemUtils {
         }
     }
 
+    public static Integer getDevicesType(String macAddress){
+        if(TextUtils.isEmpty(macAddress)){
+            return 2;
+        }
+
+        if("20:59:A0:0E:58:C6".toUpperCase().equals(macAddress)){
+            return 1;
+        }else if("20:59:a0:10:b3:db".toUpperCase().equals(macAddress)){
+            return 1;
+        }else{
+            return 2;
+        }
+    }
+
 
 }

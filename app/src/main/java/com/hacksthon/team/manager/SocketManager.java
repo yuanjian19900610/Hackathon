@@ -1,6 +1,7 @@
 package com.hacksthon.team.manager;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -118,6 +119,8 @@ public class SocketManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Log.i(TAG,"socket已经关闭");
     }
 
     public void sendData(final DeviceInfo deviceInfo) {
