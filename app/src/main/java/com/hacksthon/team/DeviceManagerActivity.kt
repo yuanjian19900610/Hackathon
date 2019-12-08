@@ -18,9 +18,8 @@ import com.hacksthon.team.event.DevicePayEvent
 import com.hacksthon.team.event.DevicePlaySoundEvent
 import com.hacksthon.team.manager.MediaPlayerManager
 import com.hacksthon.team.manager.SocketServerManager
-import com.hacksthon.team.utils.Constants
 import com.hacksthon.team.utils.RecyclerViewUtil
-import com.hacksthon.team.utils.SharedPreferencesUtil
+import com.hacksthon.team.utils.SystemUtils
 import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener
 import com.kongzue.dialog.util.BaseDialog
 import com.kongzue.dialog.util.DialogSettings
@@ -188,9 +187,11 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
             actionbar.hide()
         }
         registerEventBus()
+        val ip = SystemUtils.getIpAddress(HackathonApplication.sContext)
         serverManager = SocketServerManager.getInstance()
         serverManager!!.setEnable(true)
-        serverManager!!.startScoketServer(SharedPreferencesUtil.getInstance(applicationContext).getSP(Constants.IPADDRESS))
+        serverManager!!.startScoketServer(ip)
+
         adapter.setOnAdapterClick(this)
 
         // 设置IOS风格
@@ -198,31 +199,31 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
         // 设置亮色
         DialogSettings.theme = DialogSettings.THEME.LIGHT
         DialogSettings.tipTheme = DialogSettings.THEME.LIGHT
-//
-//        handler = Handler()
-//        runnable = Runnable {
-//            val iter = list.iterator()
-//            while (iter.hasNext()) {
-//                val device = iter.next()
-//                val mac = device.deviceMac
-//                if (isSocketClosed(mac)) {
-//                    device.deviceStatus = "离线"
-//                } else {
-//                    if (SocketServerManager.cacheTimes.containsKey(mac)) {
-//                        val cacheTime = SocketServerManager.cacheTimes.get(mac)
-//                        if (System.currentTimeMillis() - cacheTime!! > (1000*60) ) {
-//                            Log.i("qinglin.fan", "该设备已经离线" + device.deviceInfo)
-//                            device.deviceStatus = "离线"
-//                        } else {
-//                            device.deviceStatus = "在线"
-//                        }
-//                    }
-//                }
-//            }
-//            adapter.notifyDataSetChanged()
-//            handler!!.postDelayed(runnable, 60*1000)
-//        }
-//        handler!!.postDelayed(runnable, 60*1000)
+
+        handler = Handler()
+        runnable = Runnable {
+            val iter = list.iterator()
+            while (iter.hasNext()) {
+                val device = iter.next()
+                val mac = device.deviceMac
+                if (isSocketClosed(mac)) {
+                    device.deviceStatus = "离线"
+                } else {
+                    if (SocketServerManager.cacheTimes.containsKey(mac)) {
+                        val cacheTime = SocketServerManager.cacheTimes.get(mac)
+                        if (System.currentTimeMillis() - cacheTime!! > (1000*60) ) {
+                            Log.i("qinglin.fan", "该设备已经离线" + device.deviceInfo)
+                            device.deviceStatus = "离线"
+                        } else {
+                            device.deviceStatus = "在线"
+                        }
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged()
+            handler!!.postDelayed(runnable, 60*1000)
+        }
+        handler!!.postDelayed(runnable, 60*1000)
     }
 
     private fun isSocketClosed(key: String) : Boolean{
@@ -235,9 +236,13 @@ class DeviceManagerActivity : AppCompatActivity(), DeviceItemBeanAdapter.OnAdapt
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterEventBus()
-        handler!!.removeCallbacks(runnable)
-        serverManager!!.stopSocketServer()
+        try {
+            unregisterEventBus()
+            handler!!.removeCallbacks(runnable)
+            serverManager!!.stopSocketServer()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onResume() {
